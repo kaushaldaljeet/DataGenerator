@@ -1,0 +1,8 @@
+CSE
+MTH
+CHM
+BIO
+HUM
+ECE
+SWE
+PSY
