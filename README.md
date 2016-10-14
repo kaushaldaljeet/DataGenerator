@@ -8,18 +8,18 @@ java -cp .:commons-io-2.5.jar DataGenerator
 
 Currently creates data for following tables
 
-DEPARTMENT
-CLASSROOM
-STUDENT
+DEPARTMENT<br>
+CLASSROOM<br>
+STUDENT<br>
 
 
-Pending Tables
+<br><b>Pending Tables</b><br>
 
-COURSE
-INSTRUCTOR
-ADVISOR
-PREREQUISITE
-TIME_SLOT
-SECTION
-TEACHES
-TAKES
+COURSE<br>
+INSTRUCTOR<br>
+ADVISOR<br>
+PREREQUISITE<br>
+TIME_SLOT<br>
+SECTION<br>
+TEACHES<br>
+TAKES<br>
