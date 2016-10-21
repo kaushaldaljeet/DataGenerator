@@ -1,20 +1,12 @@
 package com.fit.database;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.InputMismatchException;
-import java.util.List;
 import java.util.Scanner;
-
-import org.apache.commons.io.FileUtils;
 
 public class DataGenerator 
 {
 	static String SET_SCALING_FACTOR = "setScalingFactor";
-	static String GENERATE_DATA =  "generateData";
+	static String GENERATE_DATA =  "";
 	
 	public static void main(String[] args) 
 	{
@@ -50,44 +42,60 @@ public class DataGenerator
 		{
 			long startTime = System.nanoTime();
 			
-			for (String tableName : getTableNames()) 
-			{			
-				Class<?> tableClass = Class.forName("com.fit.database." + tableName);
-				Object table = tableClass.newInstance();
-				
-				Method setScalingFactor = tableClass.getSuperclass().getMethod(SET_SCALING_FACTOR,float.class);						 
-				setScalingFactor.invoke(table, scalingFactor);
-				
-				Method  generateData = tableClass.getMethod(GENERATE_DATA);
-				generateData.invoke(table);	
+			Department dept = new Department();
+			dept.start();
+			
+			while(dept.isAlive())
+			{
+				Thread.sleep(100);
 			}
-			System.out.println("\nTotal Data Generated = "+ Table.getTotalDataGenerated() +" MB");
 			
+			ThreadGroup group = new ThreadGroup("2");
+			
+			Student student =  new Student(group);
+			student.setMinCount(250);
+			student.setScalingFactor(scalingFactor);
+			student.start();
+			
+			Classroom classroom =  new Classroom(group);
+			classroom.start();
+			
+			Course course =  new Course(group);
+			course.setScalingFactor(scalingFactor);
+			course.setMinCount(20);
+			course.start();
+			
+			Instructor instructor = new Instructor(group);
+			instructor.setScalingFactor(scalingFactor);
+			instructor.start();
+			
+			while(group.activeCount()>0)
+			{
+				Thread.sleep(1000);
+			}
+			
+			Advisor advisor = new Advisor();
+			advisor.setScalingFactor(scalingFactor);
+			advisor.start();
+			
+			Section section = new Section(100);
+			section.setScalingFactor(scalingFactor);
+			section.start();
+			
+			while(section.isAlive() || advisor.isAlive())
+			{	
+				Thread.sleep(1000);
+			}
+
 			long endTime = System.nanoTime();
-			long duration = (endTime - startTime)/1000000;  //divide by 1000000 to get milliseconds.
+			long duration = (endTime - startTime)/1000000000;  //divide by 1000000 to get milliseconds.
 			
-			System.out.println("\nTotal Time for Generation = " + duration +" ms");
-			
+			System.out.println("\nTotal Time for Generation = " + duration +" sec");
 		} 
 		catch (Exception e) 
 		{
 			e.printStackTrace();
 		}
-		
-	}
-	
-	private static List<String> getTableNames() 
-	{
-		File tableNameFile =  new File("resources/tableNames.txt");
-		try 
-		{
-			return FileUtils.readLines(tableNameFile , StandardCharsets.UTF_8 );
-		} 
-		catch (IOException e) 
-		{
-			e.printStackTrace();
-		}
-		return new  ArrayList<String>();
 	}
 
 }

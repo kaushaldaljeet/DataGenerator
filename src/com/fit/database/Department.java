@@ -30,18 +30,18 @@ public class Department extends Table
 	@Override
 	public void generateData() 
 	{
-		List<String> lines=  new ArrayList<String>();
 		int buildingNo = 0;
 		for (int i = 0; i < getDeptNames().size(); i++) 
 		{
 			buildingNo = getRandomNumber(20);
-			lines.add(getDeptNames().get(i)+"," + buildingNo +"," + getRandomNumber(500000,2000000));
+			addRow(getDeptNames().get(i),buildingNo,getRandomNumber(500000,2000000));
+			
 			if( !departmentBuildings.contains(buildingNo))
 			{
 				departmentBuildings.add(buildingNo);
 			}
 		}
-		writeToFile(lines);		
+		writeToFile();		
 	}
 	
 
@@ -59,5 +59,4 @@ public class Department extends Table
 	{
 		return departmentBuildings;
 	}
-
 }
