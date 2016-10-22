@@ -31,7 +31,7 @@ public class Instructor extends Table
 		{
 			instructorName = getRandomName();
 			deptName = getDeptNames().get(getRandomNumber(getDeptNames().size()));
-			addRow(id,instructorName,deptName,getRandomNumber(30000,150000,5));
+			addRow(id,instructorName,deptName,getRandomNumber(30000,150000,100));
 		}
 		writeToFile();
 	}

@@ -15,6 +15,7 @@ public class Department extends Table
 	
 	public Department() 
 	{
+		super();
 		try
 		{
 			File deptNameFile = new File("resources/deptNames.txt");

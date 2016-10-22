@@ -1,6 +1,9 @@
 package com.fit.database;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +16,9 @@ public class Course extends Table
 	List<String> courseTitleArray;
 	static List<Integer> courseIds;
 	
+	BufferedWriter writter;
+	File courseIdFile;
+	
 	public Course(ThreadGroup group) 
 	{
 		super(group, "Course");
@@ -22,6 +28,14 @@ public class Course extends Table
 		{
 			File courseTitleFile = new File("resources/courseTitle.txt");
 			courseTitleArray = FileUtils.readLines(courseTitleFile , StandardCharsets.UTF_8);
+			
+			File courseIdFile = new File("resources/tables/courseIds.txt");
+			if (!courseIdFile.exists())
+				courseIdFile.createNewFile();
+			
+			FileWriter fw= new FileWriter(courseIdFile, true);
+			writter = new BufferedWriter(fw);
+			
 		}
 		catch (Exception e) 
 		{
@@ -41,16 +55,38 @@ public class Course extends Table
 
 	public synchronized void  addCourseIds(int courseId)
 	{
-		courseIds.add(courseId);
+		try 
+		{
+			writter.write(courseId + "\n");
+		}
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
 	public void run() 
-	{
-		for (int i = 0; i < 5 ; i++) 
+	{	
+		try
 		{
-			final int j = i;
-			new Thread(() -> generateData(j)).start();
+			ThreadGroup group = new ThreadGroup("CourseGroup");
+			for (int i = 0; i < 10 ; i++) 
+			{
+				final int j=i;
+				new Thread(group,() -> generateData(j)).start();
+			}
+			
+			while(group.activeCount()>0)
+			{
+				Thread.sleep(1000);
+			}
+			bufferedWritter.close();
+			writter.close();
+		}
+		catch (Exception e) 
+		{
+			e.printStackTrace();
 		}
 	}
 
@@ -63,15 +99,15 @@ public class Course extends Table
 		int courseSize=getCourseTitles().size();
 		List<String> courseTitles = getCourseTitles();
 		List<String> deptNames = getDeptNames();
-		List<String> lines=  new ArrayList<String>();
 		
 		for (int i = 0; i < maxValue;i++)
 		{
 			addCourseIds(courseId++);
 			deptName = deptNames.get(getRandomNumber(8));
 			courseTitle= courseTitles.get(getRandomNumber(courseSize));
-			lines.add(courseId+","+courseTitle+","+deptName+","+getRandomNumber(1, 4));
+			//lines.add(courseId+","+courseTitle+","+deptName+","+getRandomNumber(1, 4));
+			addRow(courseId,courseTitle,deptName,getRandomNumber(1,4));
+			flushData(i);
 		}
-		writeToFile(lines);
 	}
 }

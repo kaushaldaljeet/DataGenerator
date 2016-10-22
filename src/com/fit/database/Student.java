@@ -1,24 +1,42 @@
 package com.fit.database;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Student extends Table
 {
-		private static List<Integer> studentIDs;
 		
-		protected static List<Integer> getStudentIds()
-		{
-			return studentIDs;
-		}
+		BufferedWriter writter;
+		File studentIdFile;
+		
 		public Student(ThreadGroup group) 
 		{
 			super(group, "Student");
-			studentIDs = new ArrayList<Integer>();
+			try
+			{
+				File studentIdFile = new File("resources/tables/studentIds.txt");
+				if (!studentIdFile.exists())
+					studentIdFile.createNewFile();
+				
+				FileWriter fw= new FileWriter(studentIdFile, true);
+				writter = new BufferedWriter(fw);
+			}
+			catch (Exception e) 
+			{
+				
+			}
 		}
 		public synchronized void  addStudent(int id)
 		{
-			studentIDs.add(id);
+			try
+			{
+				writter.write(id + "\n");
+			}
+			catch (Exception e) {
+			}
 		}
 		public void generateData(int max)
 		{
@@ -35,18 +53,40 @@ public class Student extends Table
 				addStudent(studentID);
 				studentName = getRandomName();
 				deptName = deptNames.get(getRandomNumber(8));
-				lines.add(studentID+","+studentName+","+deptName+","+getRandomNumber(130));
+				addRow(studentID,studentName,deptName,getRandomNumber(1,130));
+				flushData(i);
 			}
+			try
+			{
+				writter.flush();
+			}
+			catch (Exception e) {}
 			writeToFile(lines);
 		}
 
 		@Override
 		public void run() 
 		{
-			for (int i = 0; i < 10 ; i++) 
+			try
 			{
-				final int j=i;
-				new Thread(() -> generateData(j)).start();
+				ThreadGroup group = new ThreadGroup("StudentGroup");
+				for (int i = 0; i < 10 ; i++) 
+				{
+					final int j=i;
+					new Thread(group,() -> generateData(j)).start();
+				}
+				
+				while(group.activeCount()>0)
+				{
+					Thread.sleep(1000);
+				}
+				printFileDetails();
+				bufferedWritter.close();
+				writter.close();
+			}
+			catch (Exception e) 
+			{
+				// TODO: handle exception
 			}
 		}
 			

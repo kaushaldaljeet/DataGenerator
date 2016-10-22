@@ -5,3 +5,112 @@ Creative Advertising Development
 Social Media Management
 Media Planning and Buying
 Advertising Research Methods
+Numerical Analysis
+Introduction to Computer Science
+Introduction to Computer - C
+Introduction to Computer Science
+Introduction to computer science H
+Computer Organization and Programming
+Introduction to Systems Programming
+Operating Systems
+Introduction to computing with MATLAB
+Combinatorics for CS
+Digital Systems
+Data Structures 1
+Algorithms 1
+Logic Design
+Digital Computers Structure (MAMAS)
+Logic and set theory for CS
+Yearly Project in Software Engineering-Stage A
+Yearly Project in Software Engineering-Stage B
+Industrial Project
+Programming Languages
+Information Storage Systems
+Computer Graphics
+Project in Computer Graphics H
+Project in Image Processing and Analysis
+Workshop in Competitive Programming
+Logic for computer science 2
+Introduction to Coding Theory
+Formal language theory
+Complexity Theory
+Algebraic Methods in Computer Science
+Data Processing Laboratory
+Signal and Image Processing by Computer
+Digital Geometry Processing
+Introduction to optimization
+Introduction to Computer Networks
+Computer Communications Project
+Internet Networking
+Introduction to Software Verification
+Computability Theory
+Introduction to Human-Computer Interaction
+Project in Computer Security
+Computer Security
+Advanced Topics in Distributed Systems
+Automata and Formal Languages
+Distributed Algorithms A
+Advanced Topics in Distributed Algorithms
+Algorithms 2
+Theory of Compilation
+Database Management Systems
+Project in operating systems
+Formal Specifications For Complex Systems
+Concurrent and Distributed Programming
+Project in Parallel and Distributed Computation
+Bayesian networks
+Operating systems engineering
+Principles of managing uncertain data
+Project in VLSI B
+Project in Firewalls
+Cryptanalysis
+Introduction to Artificial Intelligence
+Project in Artificial Intelligence
+Project in CS Advanced Programming A
+Project in software
+Database management sys. implementations
+Coding for Storage Systems
+Approximation algorithms
+Algorithms in Computational Biology
+Introduction to Bioinformatics
+Projects in Bioinformatics
+Advanced Topics in Computer Science 1
+Advanced Topics in Computer Science 2
+Advanced Topics in Computer Science 3
+Advanced Topics in Computer Science 4
+Advanced Topics in Computer Science 5
+Advanced Topics in Computer Science 7
+Advanced Topics in Computer Science 10
+Advanced Topics in Computer Science 11
+Advanced Topics in Cryptology L
+Advanced Topics in Algorithms L
+Advanced Topics in Computer Graphics L
+Advanced Topics in Quantum Information L
+Advanced Topics in Theoretical Computer Science L
+Advanced Topics in Software Engineering L
+Advanced Topics in Information Security L+T
+Secure Quality Programs
+Software design
+Object Oriented Programming
+Geometric Modeling
+Computational Geometry
+Project in Intelligent Systems
+Introduction to machine learning
+Project in machine learning
+Algorithms for Dynamic Memory Management
+Seminar in Computer Science 1
+Seminar in Computer Science 2
+Seminar in Computer Science 3
+Seminar in Computer Science 4
+Seminar in Algorithms
+Seminar in Computer Vision
+Seminar in Computer Graphics
+Seminar in Bioinformatics
+Seminar in Distributed Algorithms
+Project in Computer Systems
+Geometric Computer Vision
+Computer Vision
+Project in computer vision
+Introduction to Robotics
+Discrete Algorithmic Geometry
+Theory Research Seminar
