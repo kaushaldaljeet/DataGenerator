@@ -10,50 +10,56 @@ import org.apache.commons.io.FileUtils;
 
 public class Department extends Table
 {
-	List<String> deptNameArray;
+	static List<String> deptNames;
 	private static List<Integer> departmentBuildings;
-	
+	static int maxValue=0;
+	public static boolean generationCompleted = false;
+	protected synchronized void incrementMaxValue()
+	{
+		maxValue++;
+	}
+	protected static int getMaxValue()
+	{
+		return maxValue;
+	}
 	public Department() 
 	{
-		super();
 		try
 		{
 			File deptNameFile = new File("resources/deptNames.txt");
-			deptNameArray = FileUtils.readLines(deptNameFile , StandardCharsets.UTF_8);
+			deptNames = FileUtils.readLines(deptNameFile , StandardCharsets.UTF_8);
 			departmentBuildings = new ArrayList<Integer>();
 		}
 		catch(IOException e)
 		{
-			System.out.println(e);
+			System.out.println("Department ==> Department() -> " + e);
 		}
 	}
 
 	@Override
 	public void generateData() 
 	{
+		if(generationCompleted)
+			return;
+		
 		int buildingNo = 0;
 		for (int i = 0; i < getDeptNames().size(); i++) 
 		{
-			buildingNo = getRandomNumber(20);
-			addRow(getDeptNames().get(i),buildingNo,getRandomNumber(500000,2000000));
-			
+			buildingNo = Utils.getInstance().getRandomNumber(1,20);
+			addRow(getDeptNames().get(i),buildingNo,Utils.getInstance().getRandomNumber(500000,2000000));
+			incrementMaxValue();
 			if( !departmentBuildings.contains(buildingNo))
 			{
 				departmentBuildings.add(buildingNo);
 			}
 		}
-		writeToFile();		
+		writeToFile();	
+		generationCompleted=true;
 	}
 	
-
-	public List<String> getDeptNames() 
+	public static List<String> getDeptNames() 
 	{
-		return deptNameArray;
-	}
-
-	public void setDeptNames(List<String> deptNameArray) 
-	{
-		this.deptNameArray = deptNameArray;
+		return deptNames;
 	}
 	
 	public static List<Integer> getDepartmentBuildings() 

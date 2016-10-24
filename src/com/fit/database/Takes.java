@@ -7,28 +7,38 @@ import java.util.Scanner;
 public class Takes extends Table 
 {
 	Scanner studentIds;
-	public Takes() 
+	public static boolean generationCompleted = false;
+	public Takes(int minCount,float scalingFactor) 
 	{
+		super();
+		setMinCount(minCount);
+		setScalingFactor(scalingFactor);
+		
 		try 
 		{
 			studentIds = new Scanner(new File("resources/tables/studentIds.txt"));
 		} 
-		catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		catch (FileNotFoundException e) 
+		{
+			System.out.println("Takes ==> Takes() -> " + e);
 		}
 		
 	}
-	
+	static int maxValue=0;
+	protected synchronized void incrementMaxValue()
+	{
+		maxValue++;
+	}
+	protected static int getMaxValue()
+	{
+		return maxValue;
+	}
 	public synchronized String getStudentId() throws Exception
 	{
 		if(studentIds.hasNext())
 			return  studentIds.next();
-		else
-		{
-			studentIds = new Scanner(new File("resources/tables/studentIds.txt"));
-			return studentIds.next();
-		}
+		
+		return null;
 	}
 	
 	@Override
@@ -41,16 +51,18 @@ public class Takes extends Table
 			Scanner section = new Scanner(new File("resources/tables/Section.txt"));
 			
 			String[] sectionString = null;
-			String sem="",studentId="";
-			int year=0;
+			String studentId="";
+			
 			for(int i=0;i<maxValue;i++)
 			{
-				int courses = getRandomNumber(1,7);
+				int courses = Utils.getInstance().getRandomNumber(1,7);
 				
 				studentId = getStudentId();
-				sem=getRandomSemester();
-				year=getRandomYear();
-				
+				if (studentId==null)
+				{
+					System.out.println("i="+i + " max="+maxValue);
+					break;
+				}	
 				for (int j = 0; j < courses; j++) 
 				{
 					if (section.hasNext())
@@ -59,28 +71,31 @@ public class Takes extends Table
 					}
 					else
 					{
-						System.out.println("aaya");
 						section = new Scanner(new File("resources/tables/Section.txt"));
 						sectionString=section.next().split(",");
 					}
-					addRow(studentId,sectionString[0],sectionString[1],sem,year,getRandomGrade());
+					addRow(studentId,sectionString[0],sectionString[1],sectionString[2],sectionString[3],getRandomGrade());
+					incrementMaxValue();
 				}
 				flushData(i);
 			}
 		}
 		catch (Exception e) 
 		{
-			e.printStackTrace();
+			System.out.println("Takes ==> generateData() -> " + e);
 		}
 	}
 	private char getRandomGrade() 
 	{
-		return  (char)('A' + getRandomNumber(5));
+		return  (char)('A' + Utils.getInstance().getRandomNumber(5));
 	}
 	
 	@Override
 	public void run() 
 	{	
+		if(generationCompleted)
+			return;
+		
 		try
 		{
 			ThreadGroup group = new ThreadGroup("TakesGroup");
@@ -93,11 +108,13 @@ public class Takes extends Table
 			{
 				Thread.sleep(1000);
 			}
-			bufferedWritter.close();
+			printFileDetails();
+			outputFileWritter.close();
+			generationCompleted=true;
 		}
 		catch (Exception e) 
 		{
-			// TODO: handle exception
+			System.out.println("Takes ==> run() -> " + e);
 		}
 	}
 }

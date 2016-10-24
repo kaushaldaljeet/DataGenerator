@@ -4,20 +4,34 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Logger;
 
 public class Advisor extends Table 
 {
+	public static boolean generationCompleted = false;
 	Scanner studentIds;
-	
-	public Advisor()
+	static int maxValue=0;
+	protected synchronized void incrementMaxValue()
 	{
+		maxValue++;
+	}
+	protected static int getMaxValue()
+	{
+		return maxValue;
+	}
+	public Advisor(int minCount,float scalingFactor) 
+	{
+		super();
+		setMinCount(minCount);
+		setScalingFactor(scalingFactor);
+		
 		try 
 		{
 			studentIds = new Scanner(new File("resources/tables/studentIds.txt"));
 		} 
-		catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		catch (FileNotFoundException e) 
+		{
+			System.out.println("Advisor ==> Advisor() -> " + e);
 		}
 	}	
 	public synchronized int getStudentId()
@@ -38,21 +52,23 @@ public class Advisor extends Table
 			for ( i = 0; i < maxValue; i++) 
 			{
 				studentId =  getStudentId();
-				instuctorId = instructorIds.get(getRandomNumber(instructorsSize));
+				instuctorId = instructorIds.get(Utils.getInstance().getRandomNumber(instructorsSize));
 				addRow(studentId,instuctorId);
-				
+				incrementMaxValue();
 				flushData(i);
 			}
 		}
 		catch (Exception e) 
 		{
-			e.printStackTrace();
+			Logger.getGlobal().severe("Advisor ==> generateData() -> " + e);
 		}
 	}
 	
 	@Override
 	public void run() 
 	{	
+		if(generationCompleted)
+			return;
 		try
 		{
 			ThreadGroup group = new ThreadGroup("AdvisorGroup");
@@ -65,11 +81,13 @@ public class Advisor extends Table
 			{
 				Thread.sleep(1000);
 			}
-			bufferedWritter.close();
+			printFileDetails();
+			outputFileWritter.close();
+			generationCompleted=true;
 		}
 		catch (Exception e) 
 		{
-			// TODO: handle exception
+			Logger.getGlobal().severe("Advisor ==> run() -> " + e);
 		}
 	}
 

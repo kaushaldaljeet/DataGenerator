@@ -5,13 +5,22 @@ import java.util.List;
 
 public class Instructor extends Table 
 {
-
-	int minCount=100;
 	private static List<Integer> instructorIds;
-	
-	public Instructor(ThreadGroup group) 
+	static int maxValue=0;
+	public static boolean generationCompleted = false;
+	protected void incrementMaxValue()
 	{
-		super(group, "Instructor");
+		maxValue++;
+	}
+	protected static int getMaxValue()
+	{
+		return maxValue;
+	}
+	public Instructor(ThreadGroup group,int minCount,float scalingFactor) 
+	{
+		super(group, group.getName());
+		setMinCount(minCount);
+		setScalingFactor(scalingFactor);
 		instructorIds=new ArrayList<Integer>();
 	}
 
@@ -23,21 +32,25 @@ public class Instructor extends Table
 	@Override
 	public void generateData() 
 	{
+		if(generationCompleted)
+			return;
+		
 		int maxValue = (int)(getMinCount() * getScalingFactor());
+		
 		String instructorName="";
 		String deptName="";
 		
+		List<String> deptNames = Department.getDeptNames();
+		int size = deptNames.size();
+		
 		for (int id = 0; id < maxValue; instructorIds.add(id++)) 
 		{
-			instructorName = getRandomName();
-			deptName = getDeptNames().get(getRandomNumber(getDeptNames().size()));
-			addRow(id,instructorName,deptName,getRandomNumber(30000,150000,100));
+			instructorName = Utils.getInstance().getRandomName();
+			deptName = deptNames.get(Utils.getInstance().getRandomNumber(size));
+			incrementMaxValue();
+			addRow(id,instructorName,deptName,Utils.getInstance().getRandomNumber(30000,150000,100));
 		}
 		writeToFile();
-	}
-
-	public int getMinCount() 
-	{
-		return minCount;
+		generationCompleted=true;
 	}
 }

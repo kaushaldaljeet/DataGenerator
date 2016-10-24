@@ -1,45 +1,44 @@
 package com.fit.database;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.apache.commons.io.FileUtils;
 
 public class Course extends Table 
 {
 
-	List<String> courseTitleArray;
+	List<String> courseTitles;
 	static List<Integer> courseIds;
-	
-	BufferedWriter writter;
-	File courseIdFile;
-	
-	public Course(ThreadGroup group) 
+	public static boolean generationCompleted = false;
+	static int maxValue=0;
+	protected synchronized void incrementMaxValue()
+	{
+		maxValue++;
+	}
+	protected static int getMaxValue()
+	{
+		return maxValue;
+	}
+	public Course(ThreadGroup group,int minCount,float scalingFactor) 
 	{
 		super(group, "Course");
+		setMinCount(minCount);
+		setScalingFactor(scalingFactor);
 		courseIds = new ArrayList<Integer>();
 		
 		try
 		{
 			File courseTitleFile = new File("resources/courseTitle.txt");
-			courseTitleArray = FileUtils.readLines(courseTitleFile , StandardCharsets.UTF_8);
-			
-			File courseIdFile = new File("resources/tables/courseIds.txt");
-			if (!courseIdFile.exists())
-				courseIdFile.createNewFile();
-			
-			FileWriter fw= new FileWriter(courseIdFile, true);
-			writter = new BufferedWriter(fw);
+			courseTitles = FileUtils.readLines(courseTitleFile , StandardCharsets.UTF_8);
 			
 		}
 		catch (Exception e) 
 		{
-			e.printStackTrace();
+			Logger.getGlobal().severe("Course ==> Course() -> " + e);
 		}
 	}
 
@@ -47,46 +46,37 @@ public class Course extends Table
 	{
 		return courseIds;
 	}
-	
-	public List<String> getCourseTitles() 
-	{
-		return courseTitleArray;
-	}
 
-	public synchronized void  addCourseIds(int courseId)
+	public synchronized void addCourseIds(int courseId)
 	{
-		try 
-		{
-			writter.write(courseId + "\n");
-		}
-		catch (IOException e) 
-		{
-			e.printStackTrace();
-		}
-	}
+		courseIds.add(courseId);
+	}	
 	
 	@Override
 	public void run() 
 	{	
+		if(generationCompleted)
+			return;
 		try
 		{
 			ThreadGroup group = new ThreadGroup("CourseGroup");
 			for (int i = 0; i < 10 ; i++) 
 			{
 				final int j=i;
-				new Thread(group,() -> generateData(j)).start();
+				new Thread(group,() -> generateData(j)).start();;
 			}
 			
 			while(group.activeCount()>0)
 			{
 				Thread.sleep(1000);
 			}
-			bufferedWritter.close();
-			writter.close();
+			printFileDetails();
+			outputFileWritter.close();
+			generationCompleted=true;
 		}
 		catch (Exception e) 
 		{
-			e.printStackTrace();
+			Logger.getGlobal().severe("Course ==> run() -> " + e);
 		}
 	}
 
@@ -96,18 +86,23 @@ public class Course extends Table
 		int courseId=(maxValue*max)+1;
 		String deptName;
 		String courseTitle;
-		int courseSize=getCourseTitles().size();
-		List<String> courseTitles = getCourseTitles();
-		List<String> deptNames = getDeptNames();
+		int courseSize=courseTitles.size();
+		List<String> deptNames = Department.getDeptNames();
 		
-		for (int i = 0; i < maxValue;i++)
+		for (int i = 0; i < maxValue;i++,courseId++)
 		{
-			addCourseIds(courseId++);
-			deptName = deptNames.get(getRandomNumber(8));
-			courseTitle= courseTitles.get(getRandomNumber(courseSize));
-			//lines.add(courseId+","+courseTitle+","+deptName+","+getRandomNumber(1, 4));
-			addRow(courseId,courseTitle,deptName,getRandomNumber(1,4));
+			addCourseIds(courseId);
+			deptName = deptNames.get(Utils.getInstance().getRandomNumber(8));
+			courseTitle= courseTitles.get(Utils.getInstance().getRandomNumber(courseSize));
+			addRow(courseId,courseTitle,deptName,Utils.getInstance().getRandomNumber(1,4));
+			incrementMaxValue();
 			flushData(i);
 		}
+	}
+
+	@Override
+	public void generateData() 
+	{
+		// TODO Auto-generated method stub
 	}
 }
