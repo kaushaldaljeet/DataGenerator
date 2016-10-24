@@ -7,13 +7,14 @@ import java.util.logging.Logger;
 public class DatabaseManager
 {
 	static Connection conn;
+	static String username="root",password;
 	
 	protected static boolean init() 
 	{
 		try
 		{
-			Class.forName("com.mysql.jdbc.Driver");  
-			conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/University?useSSL=false","root","");  
+			Class.forName("com.mysql.jdbc.Driver"); 
+			conn=DriverManager.getConnection(getConnectionURL(),username,password);  
 			return true;
 		}
 		catch (Exception e)
@@ -33,6 +34,24 @@ public class DatabaseManager
 		}
 		return conn;
 	}
+	public static Connection getNewConnection() 
+	{
+		try
+		{
+			Class.forName("com.mysql.jdbc.Driver"); 
+			conn=DriverManager.getConnection(getConnectionURL(),username,password); 
+		}
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+		return null;
+	}
+	public static String getConnectionURL()
+	{
+		String connectionURL="jdbc:mysql://localhost:3306/University?useSSL=false";
+		return connectionURL;
+	}
 	
 
-} 
+}

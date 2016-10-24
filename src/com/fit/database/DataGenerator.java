@@ -1,9 +1,6 @@
 package com.fit.database;
 
-import java.io.DataInputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -356,14 +353,14 @@ public class DataGenerator
 			if(operatingSystem.contains("windows"))
 			{
 				Process p = Runtime.getRuntime().exec("cmd /c resources\\createDatabase.bat");
-		/*		InputStream processOutput = p.getInputStream();
+				p.waitFor();
+				/*InputStream processOutput = p.getInputStream();
 				DataInputStream dis = new DataInputStream(processOutput);
 				String line=null;
 				while( (line=dis.readLine())!=null)
 				{
 					System.out.println(line);
 				}*/
-				p.waitFor();
 			}
 			else
 			{

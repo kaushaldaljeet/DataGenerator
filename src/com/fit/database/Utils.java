@@ -2,6 +2,7 @@ package com.fit.database;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.text.DecimalFormat;
@@ -49,11 +50,11 @@ public class Utils
 	  return (2000 + new Random().nextInt(16)) ; 
 	}
 
-	public synchronized String getResult(String sql)
+	public synchronized String getResult(Connection conn,String sql)
 	{
 		try
 		{
-			Statement st=DatabaseManager.getConnection().createStatement();
+			Statement st=conn.createStatement();
 			ResultSet result = st.executeQuery(sql);
 			if (result.next()) 
 			{
@@ -65,6 +66,10 @@ public class Utils
 			e.printStackTrace();
 		}
 		return "";
+	}
+	public synchronized String getResult(String sql)
+	{
+		return getResult(DatabaseManager.getConnection(), sql);
 	}
 	public synchronized String getTableSizeInMB(String tableName) 
 	{
@@ -139,9 +144,9 @@ public class Utils
 			+ " " + lastNames.get(getRandomNumber(lastNames.size()));
 	}
 
-	public String getTableCount(String tableName)
+	public String getTableCount(Connection conn,String tableName)
 	{
 		String sql="SELECT count(1) from " + tableName;
-		return getResult(sql);
+		return getResult(conn,sql);
 	}
 }

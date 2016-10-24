@@ -1,6 +1,8 @@
 package com.fit.database;
 
 import java.lang.reflect.Method;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.Statement;
 import java.util.logging.Logger;
 
@@ -20,7 +22,6 @@ public class DataLoader extends Thread
 	}
 	protected void startLoading()
 	{
-		
 		try
 		{
 			waitForComplete(generatorThread);
@@ -47,8 +48,7 @@ public class DataLoader extends Thread
 		String path = System.getProperty("user.dir");
 		path=replaceFileSeperator(path);
 		String sql = "LOAD DATA LOCAL INFILE '"+path+"/resources/tables/"+tableName+".txt' INTO TABLE "+tableName +" FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n'";
-		//System.out.println("Loading data started for " + tableName + "...");
-		Statement st = DatabaseManager.getConnection().createStatement();
+		Statement st = getConnection().createStatement();
 		st.executeQuery(sql);
 	}
 	
@@ -64,6 +64,7 @@ public class DataLoader extends Thread
 	
 	private void waitForQueryToComplete() throws Exception
 	{
+		Connection conn = getConnection();
 		Utils utils = new Utils();
 		String tableName=generatorThread.getClass().getSimpleName();
 		int currentCount;
@@ -71,7 +72,7 @@ public class DataLoader extends Thread
 		
 		while(true)
 		{
-			currentCount = Integer.parseInt(utils.getTableCount(tableName));
+			currentCount = Integer.parseInt(utils.getTableCount(conn,tableName));
 			if (max==currentCount)
 			{
 				break;
@@ -81,6 +82,7 @@ public class DataLoader extends Thread
 		
 		String tableSize=utils.getTableSizeInMB(tableName);
 		System.out.println("[DATABASE] => Data Loaded for " + tableName + " with size = " + tableSize + " MB");
+		conn.close();
 	}
 	private int getMaxRecords() throws Exception 
 	{
@@ -97,5 +99,9 @@ public class DataLoader extends Thread
 		{
 			startLoading();
 		}
+	}
+	public Connection getConnection()
+	{
+		return DatabaseManager.getNewConnection(); 
 	}
 }
