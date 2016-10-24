@@ -47,7 +47,7 @@ public class Department extends Table
 		{
 			buildingNo = Utils.getInstance().getRandomNumber(1,20);
 			// Sample Row : CSE,1,500000
-			addRow(getDeptNames().get(i),buildingNo,Utils.getInstance().getRandomNumber(500000,2000000,10000));
+			addRow(getDeptNames().get(i),buildingNo,Utils.getInstance().getRandomNumber(500000,2000000));
 			incrementMaxValue();
 			if( !departmentBuildings.contains(buildingNo))
 			{

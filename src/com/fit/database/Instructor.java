@@ -48,7 +48,7 @@ public class Instructor extends Table
 			instructorName = Utils.getInstance().getRandomName();
 			deptName = deptNames.get(Utils.getInstance().getRandomNumber(size));
 			incrementMaxValue();
-			addRow(id,instructorName,deptName,Utils.getInstance().getRandomNumber(30000,150000,100));
+			addRow(id,instructorName,deptName,Utils.getInstance().getRandomNumber(30000,150000));
 		}
 		writeToFile();
 		generationCompleted=true;

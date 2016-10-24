@@ -10,11 +10,12 @@ public class DataLoader extends Thread
 	
 	public DataLoader(Table generatorThread) 
 	{
-		 this.generatorThread=generatorThread;
+		super(generatorThread.getClass().getSimpleName()+"DataLoader");
+		this.generatorThread=generatorThread;
 	}
 	public DataLoader(ThreadGroup group,Table generatorThread) 
 	{
-		super(group,group.getName());
+		super(group,generatorThread.getClass().getSimpleName()+"DataLoader");
 		this.generatorThread=generatorThread;
 	}
 	protected void startLoading()

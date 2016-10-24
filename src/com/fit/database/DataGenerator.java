@@ -21,8 +21,8 @@ public class DataGenerator
 		try
 		{
 			input = new Scanner(System.in);
-			getInput();
 			init();
+			getInput();
 			generateData(scalingFactor);
 		}
 		catch (Exception e) 
