@@ -1,7 +1,9 @@
 package com.fit.database;
 
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -25,7 +27,8 @@ public class DataGenerator
 		}
 		catch (Exception e) 
 		{
-			System.out.println("DataGenerator ==> main() ->" + e.getStackTrace());
+			System.out.println("DataGenerator ==> main() ->");
+			e.printStackTrace();
 		}
 	}
 
@@ -47,10 +50,10 @@ public class DataGenerator
 		if(answer.toLowerCase().equals("y"))
 		{
 			loadData=true;
+			createDatabaseAndTables();
 			if(DatabaseManager.init())
 			{
 				System.out.println("Connection Established..!!");
-				createDatabaseAndTables();
 			}
 			else
 			{
@@ -89,9 +92,9 @@ public class DataGenerator
 		{
 			FileUtils.cleanDirectory(new File(path+"/resources/tables/"));
 		}
-		catch (IOException e) 
+		catch (Exception e) 
 		{
-			e.printStackTrace();
+			//ne.printStackTrace();
 		}
 	}
 
@@ -141,6 +144,10 @@ public class DataGenerator
 	private static void printDataDetails() 
 	{
 		File file = new File("resources/tables");
+		if(!file.exists())
+		{
+			file.mkdirs();
+		}
 		System.out.println("\nTotal size of data generated in files=" + Utils.getInstance().getFolderSizeInMB(file) + " MB");
 		if(loadData)
 			System.out.println("Total size of data in database=" + Utils.getInstance().getDatabaseSizeInMB("UNIVERSITY") + " MB\n");
@@ -168,22 +175,15 @@ public class DataGenerator
 		{
 			TimeSlot timeslot= new TimeSlot();
 			timeslot.start();
-			timeslot.waitForComplete(1000);
-			new Thread(() -> startTimeSlotLoading(timeslot)).start();
+			waitForComplete(timeslot);
+			new DataLoader(timeslot).start();
 			
 			Department dept = new Department();
 			dept.start();
-			dept.join(1000);
+			waitForComplete(dept);
+			new DataLoader(dept).start();
 			
-		
-			new Thread(() -> startDepartmentLoading(dept)).start();
-			Thread thread = new Thread(() -> generateSecondGroup());
-			thread.start();
-			thread.join();
-			while(thread.isAlive())
-			{
-				Thread.sleep(1000);
-			}
+			generateSecondGroup();
 		}
 		catch (Exception e) 
 		{
@@ -191,17 +191,6 @@ public class DataGenerator
 		}
 	}
 
-	private static void startTimeSlotLoading(TimeSlot timeslot)
-	{
-		new DataLoader(timeslot).start();
-	}
-
-
-
-	private static void startDepartmentLoading(Table thread) 
-	{
-		new DataLoader(thread).start();
-	}
 
 	private static void generateSecondGroup() 
 	{
@@ -256,11 +245,11 @@ public class DataGenerator
 		try
 		{
 			ThreadGroup nextBatch = new ThreadGroup("nextBatch");
-			student.waitForComplete(1000);
-			classroom.waitForComplete(1000);
+			waitForComplete(student);
+			waitForComplete(classroom);
 			Section section = new Section(100,scalingFactor);
 			section.start(); 
-			section.waitForComplete(1000);
+			waitForComplete(section);
 			
 			DataLoader sectionDataLoader = new DataLoader(section);
 			
@@ -268,7 +257,7 @@ public class DataGenerator
 			
 			
 			sectionDataLoader.start();
-			sectionDataLoader.waitForComplete();
+			waitForComplete(sectionDataLoader);
 
 			//new Thread(nextBatch,() -> generateTeaches(sectionDataLoader)).start();
 			
@@ -304,15 +293,15 @@ public class DataGenerator
 	{
 		try
 		{
-			section.waitForComplete(1000);
+			waitForComplete(section);
 			Takes takes = new Takes(250,scalingFactor);
 			takes.start();
-			takes.waitForComplete(1000);
-			studentDataLoader.waitForComplete();
-			sectionDataLoader.waitForComplete();
+			waitForComplete(takes);
+			waitForComplete(studentDataLoader);
+			waitForComplete(sectionDataLoader);
 			DataLoader takesDataLoader = new DataLoader(takes);
 			takesDataLoader.start();
-			takesDataLoader.waitForComplete();
+			waitForComplete(takesDataLoader);
 		}
 		catch (Exception e) 
 		{
@@ -324,13 +313,13 @@ public class DataGenerator
 	{
 		try
 		{
-			course.waitForComplete(1000);
+			waitForComplete(course);
 			Prerequisite pre = new Prerequisite(100,scalingFactor);
 			pre.start(); 
-			courseDataLoader.waitForComplete();
+			waitForComplete(courseDataLoader);
 			DataLoader prerequisiteDataLoader = new DataLoader(pre);
 			prerequisiteDataLoader.start();
-			prerequisiteDataLoader.waitForComplete();
+			waitForComplete(prerequisiteDataLoader);
 		}
 		catch (Exception e) 
 		{
@@ -342,16 +331,16 @@ public class DataGenerator
 	{
 		try
 		{
-			student.waitForComplete(1000);
-			instructor.waitForComplete(1000);
+			waitForComplete(student);
+			waitForComplete(instructor);
 			Advisor advisor = new Advisor(250,scalingFactor);
 			advisor.start();
-			advisor.waitForComplete(1000);
-			studentDataLoader.waitForComplete();
-			instructorDataLoader.waitForComplete();
+			waitForComplete(advisor);
+			waitForComplete(studentDataLoader);
+			waitForComplete(instructorDataLoader);
 			DataLoader advisorDataLoader = new DataLoader(advisor);
 			advisorDataLoader.start();
-			advisorDataLoader.waitForComplete();
+			waitForComplete(advisorDataLoader);
 		}
 		catch (Exception e) 
 		{
@@ -363,8 +352,24 @@ public class DataGenerator
 	{
 		try
 		{
-			Process p = Runtime.getRuntime().exec("./resources/createDatabase.sh");
-			p.waitFor();
+			String operatingSystem = System.getProperty("os.name").toLowerCase();
+			if(operatingSystem.contains("windows"))
+			{
+				Process p = Runtime.getRuntime().exec("cmd /c resources\\createDatabase.bat");
+		/*		InputStream processOutput = p.getInputStream();
+				DataInputStream dis = new DataInputStream(processOutput);
+				String line=null;
+				while( (line=dis.readLine())!=null)
+				{
+					System.out.println(line);
+				}*/
+				p.waitFor();
+			}
+			else
+			{
+				Process p = Runtime.getRuntime().exec("./resources/createDatabase.sh");
+				p.waitFor();
+			}
 		}
 		catch (Exception e) 
 		{
@@ -372,7 +377,15 @@ public class DataGenerator
 		}
 	}
 
-
+	
+	private static void waitForComplete(Thread thread) throws Exception
+	{
+		while(thread.isAlive())
+		{
+			Thread.sleep(1000);
+		}
+	}
+	
 
 	public static boolean isLoadData() 
 	{

@@ -64,9 +64,9 @@ public abstract class Table extends Thread
 	{
 		try 
 		{
-			printFileDetails();
 			outputFileWritter.flush();
 			outputFileWritter.close();
+			printFileDetails();
 		}
 		catch (Exception e) 
 		{
@@ -133,21 +133,6 @@ public abstract class Table extends Thread
 			{
 				System.out.println("Table ==> flushData() -> " + e);
 			}
-		}
-	}
-	
-	public void waitForComplete(int timeout) 
-	{
-		try
-		{
-			while(this.isAlive())
-			{
-				sleep(timeout);
-			}
-		}
-		catch (Exception e) 
-		{
-			System.out.println("Table ==> waitForSometime() -> " + e);
 		}
 	}
 }

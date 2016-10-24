@@ -37,6 +37,7 @@ public class TimeSlot extends Table
 			incrementMaxValue();
 			days = getRandomDays();
 			startTime=Utils.getInstance().getRandomNumber(8, 18);
+			//Sample Row : 1,MWF,10,11
 			addRow(i,days,startTime,startTime+1);
 		}
 		writeToFile();

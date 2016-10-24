@@ -13,7 +13,7 @@ public class DatabaseManager
 		try
 		{
 			Class.forName("com.mysql.jdbc.Driver");  
-			conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/University","root","");  
+			conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/University?useSSL=false","root","");  
 			return true;
 		}
 		catch (Exception e)
@@ -35,4 +35,4 @@ public class DatabaseManager
 	}
 	
 
-}
+} 

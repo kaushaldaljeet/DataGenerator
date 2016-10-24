@@ -1,0 +1,1 @@
+mysql --user=root  < resources\University.sql

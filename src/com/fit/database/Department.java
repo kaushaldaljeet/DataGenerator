@@ -14,7 +14,7 @@ public class Department extends Table
 	private static List<Integer> departmentBuildings;
 	static int maxValue=0;
 	public static boolean generationCompleted = false;
-	protected synchronized void incrementMaxValue()
+	protected void incrementMaxValue()
 	{
 		maxValue++;
 	}
@@ -46,7 +46,8 @@ public class Department extends Table
 		for (int i = 0; i < getDeptNames().size(); i++) 
 		{
 			buildingNo = Utils.getInstance().getRandomNumber(1,20);
-			addRow(getDeptNames().get(i),buildingNo,Utils.getInstance().getRandomNumber(500000,2000000));
+			// Sample Row : CSE,1,500000
+			addRow(getDeptNames().get(i),buildingNo,Utils.getInstance().getRandomNumber(500000,2000000,10000));
 			incrementMaxValue();
 			if( !departmentBuildings.contains(buildingNo))
 			{
