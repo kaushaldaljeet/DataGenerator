@@ -73,7 +73,7 @@ public class Utils
 	}
 	public synchronized String getTableSizeInMB(String tableName) 
 	{
-		String sql="SELECT sum((data_length+index_length)/power(1024,2)) tablesize_mb FROM information_schema.tables WHERE table_name='"+tableName+"'";
+		String sql="SELECT sum((data_length)/power(1024,2)) tablesize_mb FROM information_schema.tables WHERE table_name='"+tableName+"'";
 		String resultSize;
 		float size;
 		int count=0;
@@ -89,7 +89,7 @@ public class Utils
 	}
 	public synchronized String getDatabaseSizeInMB(String databaseName) 
 	{
-		String sql="SELECT sum((data_length+index_length)/power(1024,2)) tablesize_mb FROM information_schema.tables WHERE table_schema='"+databaseName+"'";
+		String sql="SELECT sum((data_length)/power(1024,2)) tablesize_mb FROM information_schema.tables WHERE table_schema='"+databaseName+"'";
 		String resultSize;
 		int count=0;
 		do

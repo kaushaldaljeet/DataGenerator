@@ -1,10 +1,8 @@
 package com.fit.database;
 
 import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import org.apache.commons.io.FileUtils;
@@ -14,6 +12,7 @@ public class DataGenerator
 {
 	static float scalingFactor;
 	private static boolean loadData = false;
+	private static boolean databaseException = false;
 	static BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
 
 	public static void main(String[] args) 
@@ -56,7 +55,8 @@ public class DataGenerator
 			}
 			else
 			{
-				System.out.println("Connection cannot be established. Check connection details in DatabaseManager");	
+				System.out.println("Connection cannot be established. Check connection details in DatabaseManager");
+				databaseException=true;
 				loadData=false;
 			}
 		}
@@ -127,7 +127,7 @@ public class DataGenerator
 
 	private static void loadDataInDatabase(float scalingFactor) throws Exception
 	{
-		if(!loadData)
+		if(!databaseException && !loadData)
 		{
 			System.out.print("Would you like to load data in Database (y/n) : ");
 			String answer = input.readLine();
