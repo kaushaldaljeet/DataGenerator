@@ -2,7 +2,6 @@ package com.fit.database;
 
 import java.lang.reflect.Method;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.Statement;
 import java.util.logging.Logger;
 
@@ -30,7 +29,8 @@ public class DataLoader extends Thread
 		}
 		catch (Exception e)
 		{
-			Logger.getGlobal().severe("DataLoader ==> startLoading() -> " + e);
+			Logger.getGlobal().severe("DataLoader ==> startLoading() -> ");
+			e.printStackTrace();
 		}
 	}
 	
@@ -50,6 +50,7 @@ public class DataLoader extends Thread
 		String sql = "LOAD DATA LOCAL INFILE '"+path+"/resources/tables/"+tableName+".txt' INTO TABLE "+tableName +" FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n'";
 		Statement st = getConnection().createStatement();
 		st.executeQuery(sql);
+		st.closeOnCompletion();
 	}
 	
 	private String replaceFileSeperator(String path) 

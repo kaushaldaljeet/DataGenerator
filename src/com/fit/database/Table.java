@@ -76,9 +76,12 @@ public abstract class Table extends Thread
 	
 	protected synchronized void printFileDetails() 
 	{
-		System.out.print("[FILE] => ");
-		System.out.print(outputFile.getName() + " generated of size " );
-		System.out.println(Utils.getInstance().getFileSizeInMB(outputFile) + " MB");
+		synchronized (System.out) 
+		{
+			System.out.print("[FILE] => ");
+			System.out.print(outputFile.getName() + " generated of size " );
+			System.out.println(Utils.getInstance().getFileSizeInMB(outputFile) + " MB");
+		}
 	}
 	
 	public abstract void generateData();

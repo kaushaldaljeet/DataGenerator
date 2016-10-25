@@ -1,8 +1,11 @@
 package com.fit.database;
 
+import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.File;
-import java.util.InputMismatchException;
-import java.util.Scanner;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import org.apache.commons.io.FileUtils;
 
@@ -11,13 +14,12 @@ public class DataGenerator
 {
 	static float scalingFactor;
 	private static boolean loadData = false;
-	static Scanner input;
-	
+	static BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+
 	public static void main(String[] args) 
 	{
 		try
 		{
-			input = new Scanner(System.in);
 			init();
 			getInput();
 			generateData(scalingFactor);
@@ -31,7 +33,7 @@ public class DataGenerator
 
 
 
-	private static void getInput() 
+	private static void getInput() throws Exception
 	{
 		initScalingFactor();
 		initDatabaseManager();
@@ -39,10 +41,10 @@ public class DataGenerator
 
 
 
-	private static void initDatabaseManager() 
+	private static void initDatabaseManager() throws IOException 
 	{
 		System.out.print("\nWould you like to simultaneously load data in Database (y/n) : ");
-		String answer = input.next();
+		String answer = input.readLine();
 
 		if(answer.toLowerCase().equals("y"))
 		{
@@ -62,18 +64,18 @@ public class DataGenerator
 
 
 
-	private static void initScalingFactor()
+	private static void initScalingFactor() throws Exception
 	{
-		System.out.print("Please enter SF (Scaling Factor) > 0 :");
-		scalingFactor = input.nextFloat();
 		try
 		{
+			System.out.print("Please enter SF (Scaling Factor) > 0 :");
+			scalingFactor = Float.parseFloat(input.readLine());
 			if(scalingFactor<=0)
 			{
 				initScalingFactor();
 			}
 		}
-		catch (InputMismatchException e) 
+		catch (Exception e) 
 		{
 			System.out.println("Please enter only numbers :) \n");
 			initScalingFactor();
@@ -123,12 +125,12 @@ public class DataGenerator
 
 
 
-	private static void loadDataInDatabase(float scalingFactor) 
+	private static void loadDataInDatabase(float scalingFactor) throws Exception
 	{
 		if(!loadData)
 		{
 			System.out.print("Would you like to load data in Database (y/n) : ");
-			String answer = input.next();
+			String answer = input.readLine();
 			if(answer.toLowerCase().equals("y"))
 			{
 				loadData=true;
@@ -353,19 +355,14 @@ public class DataGenerator
 			if(operatingSystem.contains("windows"))
 			{
 				Process p = Runtime.getRuntime().exec("cmd /c resources\\createDatabase.bat");
-				p.waitFor();
-				/*InputStream processOutput = p.getInputStream();
-				DataInputStream dis = new DataInputStream(processOutput);
-				String line=null;
-				while( (line=dis.readLine())!=null)
-				{
-					System.out.println(line);
-				}*/
+				p.waitFor();				
 			}
 			else
 			{
 				Process p = Runtime.getRuntime().exec("./resources/createDatabase.sh");
 				p.waitFor();
+				System.out.println("Please load University.sql to MySQL from resources folder and  Press Enter");
+				input.readLine();
 			}
 		}
 		catch (Exception e) 
@@ -374,7 +371,7 @@ public class DataGenerator
 		}
 	}
 
-	
+
 	private static void waitForComplete(Thread thread) throws Exception
 	{
 		while(thread.isAlive())
